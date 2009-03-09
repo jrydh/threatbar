@@ -23,6 +23,8 @@ function ThreatBar:OnInitialize()
 	self:CreateFrame();
 end
 
+local maxheight = 300;
+
 function ThreatBar:CreateFrame()
 	if self.frame then return; end
 
@@ -36,7 +38,7 @@ function ThreatBar:CreateFrame()
 		insets = { left = 4, right = 4, top = 4, bottom = 4 } } );
 	f:SetBackdropColor( 0, 0, 0, 0.5 );
 	f:SetWidth( 61 );
-	f:SetHeight( 320 );
+	f:SetHeight( maxheight + 20 );
 	f:EnableMouse( true );
 	f:SetMovable( true );
 	f:RegisterForDrag( "LeftButton" );
@@ -57,14 +59,14 @@ function ThreatBar:CreateFrame()
 	f.tankbar:SetTexCoord( 0, 0, 1, 0, 0, 1, 1, 1 );
 	f.tankbar:SetVertexColor( 1, 0, 0 );
 	f.tankbar:SetWidth( 10 );
-	f.tankbar:SetHeight( 300 );
+	f.tankbar:SetHeight( maxheight );
 	f.tankbar:SetPoint( "BOTTOMLEFT", f, "BOTTOMLEFT", 10, 10 );
 
 	f.playerbar = f:CreateTexture( nil, "OVERLAY" );
 	f.playerbar:SetTexture( "Interface\\AddOns\\ThreatBar\\charcoal" );
 	f.playerbar:SetTexCoord( 0, 0, 1, 0, 0, 1, 1, 1 );
 	f.playerbar:SetWidth( 30 );
-	f.playerbar:SetHeight( 300 );
+	f.playerbar:SetHeight( maxheight );
 	f.playerbar:SetPoint( "BOTTOMRIGHT", f, "BOTTOMRIGHT", -10, 10 );
 	
 	f.pct = f:CreateFontString( nil, "OVERLAY", "GameFontNormalSmall" );
@@ -101,8 +103,7 @@ function ThreatBar:Update()
 	local isTanking, status, scaledpct, rawpct, threatvalue
 		= UnitDetailedThreatSituation( "player", "target" );
 		
-	local maxheight = 300;
-	if status == nil or ( threatvalue == 0 and rawpct == 0 ) then	-- not in the mob's aggro list
+	if status == nil or rawpct == 0 then	-- not in the mob's aggro list
 		self.frame.tankbar:Hide();
 		self.frame.playerbar:Hide();
 		self.frame.pct:SetText( "0%" );
@@ -114,7 +115,7 @@ function ThreatBar:Update()
 	self.frame.playerbar:Show();
 	
 	if isTanking or rawpct > 100 then
-		self.frame.tankbar:SetHeight( floor( maxheight ) );
+		self.frame.tankbar:SetHeight( maxheight );
 		self.frame.playerbar:SetHeight( maxheight );
 		self.frame.playerbar:SetVertexColor( 1, 0, 0 );
 		self.frame.pct:SetText( "***" );
