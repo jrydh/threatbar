@@ -3,7 +3,6 @@
 ## Notes: A minimal threat GUI
 ## Author: Rishi
 ## Version: 1.0
-## SavedVariables: ThreatBarDB
 ## X-Category: Raid
 
 embeds.xml

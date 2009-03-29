@@ -19,17 +19,13 @@
 ThreatBar = LibStub("AceAddon-3.0"):NewAddon( "ThreatBar", "AceEvent-3.0" );
 
 function ThreatBar:OnInitialize()
-	self.db = LibStub("AceDB-3.0"):New( "ThreatBarDB" );
-	self:CreateFrame();
+	self.frame = self:CreateFrame();
 end
 
 local maxheight = 300;
 
 function ThreatBar:CreateFrame()
-	if self.frame then return; end
-
 	local f = CreateFrame( "Frame", "ThreatBarFrame", UIParent, "SecureFrameTemplate" );
-	self.frame = f;
 	f:SetAttribute( "unit", "target" );
 	RegisterStateDriver( f, "visibility", "[combat,harm,exists,nodead] show; hide" );
 
@@ -37,22 +33,14 @@ function ThreatBar:CreateFrame()
 		tile = true, tileSize = 16, nil,
 		insets = { left = 4, right = 4, top = 4, bottom = 4 } } );
 	f:SetBackdropColor( 0, 0, 0, 0.5 );
+
 	f:SetWidth( 61 );
 	f:SetHeight( maxheight + 20 );
 	f:EnableMouse( true );
 	f:SetMovable( true );
-	f:RegisterForDrag( "LeftButton" );
-	f:SetScript( "OnDragStart", function() if IsAltKeyDown() then f:StartMoving(); end end );
-	f:SetScript( "OnDragStop", function() f:StopMovingOrSizing() self:SavePosition(); end );
-
-	if not self.db.profile.position then
-		self.frame:SetPoint( "CENTER", UIParent );
-		self.db.profile.position = {};
-		self:SavePosition();
-	else
-		local pos = self.db.profile.position;
-		self.frame:SetPoint( pos.point, UIParent, pos.relPoint, pos.x, pos.y );
-	end
+	f:SetScript( "OnMouseDown", function() if IsAltKeyDown() then f:StartMoving(); end end );
+	f:SetScript( "OnMouseUp", function() f:StopMovingOrSizing() end );
+	if not f:GetLeft() then f:SetPoint( "CENTER" ); end
 
 	f.tankbar = f:CreateTexture( nil, "OVERLAY" );
 	f.tankbar:SetTexture( "Interface\\AddOns\\ThreatBar\\charcoal" );
@@ -78,14 +66,8 @@ function ThreatBar:CreateFrame()
 	f.deficit:SetWidth( 50 );
 	f.deficit:SetHeight( 12 );
 	f.deficit:SetPoint( "TOP", f, "TOP", 0, -3 );
-end
 
-function ThreatBar:SavePosition()
-	local point, _, relPoint, x, y = self.frame:GetPoint();
-	self.db.profile.position.point = point;
-	self.db.profile.position.relPoint = relPoint;
-	self.db.profile.position.x = math.floor(x);
-	self.db.profile.position.y = math.floor(y);
+	return f;
 end
 
 function ThreatBar:OnEnable()
