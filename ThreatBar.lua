@@ -96,7 +96,7 @@ function ThreatBar:Update()
 	self.frame.tankbar:Show();
 	self.frame.playerbar:Show();
 	
-	if isTanking or rawpct > 100 then
+	if isTanking or scaledpct >= 100 then
 		self.frame.tankbar:SetHeight( maxheight );
 		self.frame.playerbar:SetHeight( maxheight );
 		self.frame.playerbar:SetVertexColor( 1, 0, 0 );
